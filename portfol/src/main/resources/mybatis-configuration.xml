@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+	<!-- member_name > memberName -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+	
+	<!-- 쿼리 수행 결과를 DTO에 자동 매핑하기 위해 DTO 검색 -->
+	<typeAliases>
+		<!-- @Alias("Member") -->
+		<package name="com.yyh.pf.dto" />
+	</typeAliases>
+	
+	<!-- 개별로 setting 하는 방벙
+	<typeAlias alias="Employees" type="com.tj.dto.Member" />
+	-->
+	
+	
+</configuration>

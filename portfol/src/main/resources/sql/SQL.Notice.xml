@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yyh.pf.dao.NoticeDao">
+
+	<insert id="insertWrite" parameterType="HashMap" useGeneratedKeys="true" keyProperty="boardSeq">
+		INSERT INTO board (`type_seq`, `member_idx`, `member_id`, `member_nick`, `title`, `content`, `has_file`, `create_date`)
+		VALUES (#{typeSeq}, #{memberIdx}, #{memberId}, #{memberNick}, #{title}, #{contents}, #{hasFile}, NOW())
+		
+		<!-- AUTO_INCREMENT를 지원하지 않는 DB일 경우 
+		<selectKey keyProperty="b" resultType="int" order="AFTER">
+		SELECT LAST_INSERT_ID()
+		</selectKey>
+		-->
+	</insert>
+	
+	<select id="getTotalCount" resultType="int">
+		SELECT COUNT(board_seq) FROM board WHERE type_seq = 1
+	</select>
+	
+	<select id="selectAllList" parameterType="HashMap" resultType="HashMap">
+		SELECT * FROM board WHERE type_seq = 1 ORDER BY board_seq DESC LIMIT ${startIdx}, ${pageArticleSize}
+	</select>
+	
+	<select id="getBoard" parameterType="int" resultType="Map">
+		SELECT * FROM board WHERE type_seq = #{0} AND board_seq = #{1}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM board WHERE type_seq = #{0} AND board_seq = #{1}
+	</delete>
+	
+	<update id="update" parameterType="Map">
+		UPDATE board SET title = #{title}, content = #{contents}, has_file = #{hasFile}, update_date = NOW()
+		 WHERE type_seq = #{typeSeq} AND board_seq = #{boardSeq}
+	</update>
+	
+	<update id="updateHasFile" parameterType="int">
+		UPDATE board SET has_file = 0 WHERE type_seq = #{0} AND board_seq = #{1}
+	</update>
+</mapper>

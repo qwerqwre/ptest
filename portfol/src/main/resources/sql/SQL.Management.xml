@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yyh.pf.dao.ManagementDao">
+	<select id="getMemberType" parameterType="int" resultType="int">
+		SELECT * FROM member WHERE type_seq = #{0}
+	</select>
+</mapper>

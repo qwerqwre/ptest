@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yyh.pf.dao.BoardDao">
+
+	<select id="selectAllList" parameterType="HashMap" resultType="HashMap">
+		SELECT * FROM board WHERE `type_seq` = 2
+		<if test="searchType != null and searchType == 1">
+			AND (`title` LIKE CONCAT('%', #{searchText}, '%') OR `content` LIKE CONCAT('%', #{searchText}, '%'))
+		</if>
+		<if test="searchType != null and searchType == 2">
+			AND `title` LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+		<if test="searchType != null and searchType == 3">
+			AND `content` LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+		ORDER BY `board_seq` DESC
+		LIMIT ${startIdx}, ${pageArticleSize}
+	</select>
+	
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+		SELECT COUNT(board_seq) FROM board WHERE type_seq = 2
+		<if test="searchType != null and searchType == 1">
+			AND (`title` LIKE CONCAT('%', #{searchText}, '%') OR `content` LIKE CONCAT('%', #{searchText}, '%'))
+		</if>
+		<if test="searchType != null and searchType == 2">
+			AND `title` LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+		<if test="searchType != null and searchType == 3">
+			AND `content` LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+	</select>
+
+	<insert id="insertWrite" parameterType="HashMap">
+		INSERT INTO board (`type_seq`, `member_idx`, `member_id`, `member_nick`, `title`, `content`, `create_date`)
+		VALUES (#{typeSeq}, #{memberIdx}, #{memberId}, #{memberNick}, #{title}, #{contents}, NOW())
+	</insert>
+	
+	<update id="updateHits" parameterType="int">
+		UPDATE board SET hits = hits + 1 WHERE type_seq = #{0} AND board_seq = #{1}
+	</update>
+	
+	<select id="getBoard" parameterType="int" resultType="Map">
+		SELECT * FROM board WHERE type_seq = #{0} AND board_seq = #{1}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM board WHERE type_seq = #{0} AND board_seq = #{1}
+	</delete>
+	
+	<update id="update" parameterType="HashMap">
+		UPDATE board SET title = #{title}, content = #{contents}, update_date = NOW() WHERE type_seq = #{typeSeq} AND board_seq = #{boardSeq}
+	</update>
+	
+	<select id="selectBoard" parameterType="HashMap" resultType="HashMap">
+		SELECT board_seq AS boardSeq,
+				title,
+				content,
+				member_nick AS memberNick,
+				hits,
+				DATE_FORMAT(create_date, '%Y-%m-%d') AS createDate
+		FROM board
+		WHERE type_seq = 2
+		<if test="searchType != null and searchType == 1">
+			AND (`title` LIKE CONCAT('%', #{searchText}, '%') OR `content` LIKE CONCAT('%', #{searchText}, '%'))
+		</if>
+		<if test="searchType != null and searchType == 2">
+			AND `title` LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+		<if test="searchType != null and searchType == 3">
+			AND `content` LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+	</select>
+</mapper>

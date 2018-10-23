@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.yyh.pf.dao.MemberDao">
+	
+	<insert id="join" parameterType="HashMap">
+		INSERT INTO member (`type_seq`, `member_id`, `member_pw`, `member_name`, `member_nick`, `email`, `birth_date`, `create_date`)
+		VALUES (2, #{memberId}, SHA2(MD5(#{memberPw}),512), #{memberName}, #{memberNick}, #{email}, #{birthDate}, NOW())
+	</insert>
+	
+	<select id="findMemberId" parameterType="String" resultType="Member">
+		SELECT * FROM member WHERE member_id = #{0}
+	</select>
+	
+	<select id="makeCipherText" parameterType="String" resultType="String">
+		SELECT SHA2(MD5(#{0}), 512)
+	</select>
+	
+	<select id="checkId" parameterType="HashMap" resultType="int">
+		SELECT COUNT(member_idx) FROM member WHERE member_id = #{0}
+	</select>
+	
+	<select id="selectMember" parameterType="HashMap" resultType="HashMap">
+		SELECT member_idx AS memberIdx,
+				member_id AS memberId,
+				member_nick AS memberNick,
+				member_name AS memberName,
+				email,
+				DATE_FORMAT(create_date, '%Y-%m-%d') AS createDate
+		FROM member
+		WHERE 1=1
+		<if test="searchType != null and searchType == 1">
+			AND (member_id LIKE CONCAT('%', #{searchText}, '%') OR member_name LIKE CONCAT('%', #{searchText}, '%'))
+		</if>
+		<if test="searchType != null and searchType == 2">
+			AND member_id LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+		<if test="searchType != null and searchType == 3">
+			AND member_id LIKE CONCAT('%', #{searchText}, '%')
+		</if>
+	</select>
+	
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+		SELECT COUNT(member_idx) FROM member 
+	</select>
+	
+	<delete id="delete" parameterType="HashMap">
+		DELETE FROM member WHERE member_idx = #{memberIdx}
+	</delete>
+</mapper>
